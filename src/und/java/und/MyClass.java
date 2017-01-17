@@ -10,15 +10,16 @@ public class MyClass {
         return methodReferenced();
     }
     
-    private String methodRefering1() {
-        return undMethod1(1);
-    }
-    
     private String methodReferenced() {
         return "";
     }
     
+    private String methodRefering1() {
+        return undMethod1(1) + methodRefering1();
+    }
+    
     protected double protectedMethod() {
+        undMethod1(2);
         return somePublicField.method() + 1;
     }
     

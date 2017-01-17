@@ -9,14 +9,11 @@ import com.scitools.understand.Entity;
 
 public abstract class EntityLocator {
 
-    public EntityLocator() {
-        super();
-    }
-
     protected abstract String entityLocator();
 
     public List<Entity> getEntities(Database database) {
-        return Arrays.stream(database.ents(entityLocator())).filter(this::isOwnEntity).collect(Collectors.toList());
+        return Arrays.stream(database.ents(entityLocator())).filter(this::isOwnEntity).filter(this::matches)
+                .collect(Collectors.toList());
     }
 
     protected boolean isOwnEntity(Entity entity) {
@@ -24,4 +21,7 @@ public abstract class EntityLocator {
         return !name.startsWith("java.") && !name.startsWith("javax.") && !name.startsWith("sun.");
     }
 
+    protected boolean matches(Entity entity) {
+        return true;
+    }
 }

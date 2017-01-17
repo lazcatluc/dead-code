@@ -23,6 +23,7 @@ import com.aurea.und.locate.FileLocator;
 import com.aurea.und.locate.Parameter;
 import com.aurea.und.locate.PrivateMethod;
 import com.aurea.und.locate.PrivateVariable;
+import com.aurea.und.locate.unused.UnusedPrivateMethod;
 import com.scitools.understand.Database;
 import com.scitools.understand.Entity;
 import com.scitools.understand.Reference;
@@ -40,6 +41,8 @@ public class QueryDbTest {
     private AnalyzeCommand analyzeCommand;
     @Autowired
     private PrivateMethod privateMethod;
+    @Autowired
+    private UnusedPrivateMethod unusedPrivateMethod;
     @Autowired
     private PrivateVariable privateVariable;
     @Autowired
@@ -84,8 +87,9 @@ public class QueryDbTest {
         assertThat(maybeClass.isPresent()).isTrue();
         logReferences(maybeClass.get());
         Optional<Entity> maybeMethod = Arrays.stream(database.ents("private method"))
-                .filter(entity -> entity.longname(true).equals("und.MyClass.InnerClass.method")).findAny();
+                .filter(entity -> entity.longname(true).equals("und.MyClass.undMethod1")).findAny();
         assertThat(maybeMethod.isPresent()).isTrue();
+        
         logReferences(maybeMethod.get());
         assertThat(Arrays.stream(database.ents("variable")).map(Entity::name)
                 .anyMatch(name -> name.equals("MyClass.undSomeField"))).isTrue();
@@ -96,6 +100,7 @@ public class QueryDbTest {
                 .size()).isEqualTo(1);
         assertThat(privateVariable.getEntities(database).size()).isEqualTo(1);
         assertThat(parameter.getEntities(database).size()).isEqualTo(2);
+        assertThat(unusedPrivateMethod.getEntities(database).size()).isEqualTo(1);
     }
 
     private void logReferences(Entity method) {
