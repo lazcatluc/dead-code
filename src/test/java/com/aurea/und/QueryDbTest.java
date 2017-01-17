@@ -24,6 +24,7 @@ import com.aurea.und.locate.Parameter;
 import com.aurea.und.locate.PrivateMethod;
 import com.aurea.und.locate.PrivateVariable;
 import com.aurea.und.locate.unused.UnusedPrivateMethod;
+import com.aurea.und.locate.unused.UnusedPrivateVariable;
 import com.scitools.understand.Database;
 import com.scitools.understand.Entity;
 import com.scitools.understand.Reference;
@@ -45,6 +46,8 @@ public class QueryDbTest {
     private UnusedPrivateMethod unusedPrivateMethod;
     @Autowired
     private PrivateVariable privateVariable;
+    @Autowired
+    private UnusedPrivateVariable unusedPrivateVariable;
     @Autowired
     private FileLocator fileLocator;
     @Autowired
@@ -92,16 +95,20 @@ public class QueryDbTest {
         
         logReferences(maybeMethod.get());
         LOGGER.info(Arrays.asList(maybeMethod.get().ib(null)));
-        assertThat(Arrays.stream(database.ents("variable")).map(Entity::name)
-                .anyMatch(name -> name.equals("MyClass.undSomeField"))).isTrue();
+        Optional<Entity> maybeVariable = Arrays.stream(database.ents("variable")).filter(
+                entity -> entity.name().equals("MyClass.undSomeField")).findFirst();
+        assertThat(maybeVariable.isPresent()).isTrue();
+        LOGGER.info(Arrays.asList(maybeVariable.get().ib(null)));
+        
         assertThat(Arrays.stream(database.ents("parameter")).map(entity -> entity.longname(true))
                 .anyMatch(name -> name.equals("und.MyClass.undMethod1.someMethodParameter"))).isTrue();
-        assertThat(privateMethod.getEntities(database).size()).isEqualTo(6);
+        assertThat(privateMethod.getEntities(database).size()).isEqualTo(7);
         assertThat(privateMethod.getEntities(database).stream().map(fileLocator::getFile).collect(Collectors.toSet())
                 .size()).isEqualTo(1);
-        assertThat(privateVariable.getEntities(database).size()).isEqualTo(1);
+        assertThat(privateVariable.getEntities(database).size()).isEqualTo(3);
         assertThat(parameter.getEntities(database).size()).isEqualTo(2);
         assertThat(unusedPrivateMethod.getEntities(database).size()).isEqualTo(2);
+        assertThat(unusedPrivateVariable.getEntities(database).size()).isEqualTo(2);
     }
 
     private void logReferences(Entity method) {

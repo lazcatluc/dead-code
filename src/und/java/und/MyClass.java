@@ -2,9 +2,14 @@ package und;
 
 public class MyClass {
     private int undSomeField;
+    private int innerClassCounter;
     double defaultField = 1;
     protected String protectedField = "protected";
     public final InnerClass somePublicField = new InnerClass();
+    
+    static {
+        usedInBlockStaticMethod();
+    }
     
     private static int unusedStaticMethod() {
         return 2;
@@ -12,6 +17,10 @@ public class MyClass {
     
     private static int usedStaticMethod() {
         return 3;
+    }
+    
+    private static int usedInBlockStaticMethod() {
+        return 4;
     }
     
     private String undMethod1(Integer someMethodParameter) {
@@ -28,7 +37,7 @@ public class MyClass {
     
     protected double protectedMethod() {
         undMethod1(2);
-        return somePublicField.method() + 1;
+        return somePublicField.method() + 1 + innerClassCounter;
     }
     
     int defaultMethod(int someParameter) {
@@ -40,7 +49,14 @@ public class MyClass {
     }
     
     private class InnerClass {
+        private int innerVariable = 2;
+        
+        public InnerClass() {
+            innerClassCounter++;
+        }
+        
         private double method() {
+            innerVariable++;
             return defaultField + usedStaticMethod();
         }
     }
