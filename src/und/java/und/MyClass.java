@@ -4,7 +4,7 @@ public class MyClass {
     private int undSomeField;
     double defaultField = 1;
     protected String protectedField = "protected";
-    public final Object somePublicField = new Object();
+    public final InnerClass somePublicField = new InnerClass();
     
     private String undMethod1(Integer someMethodParameter) {
         return methodReferenced();
@@ -18,8 +18,8 @@ public class MyClass {
         return "";
     }
     
-    protected int protectedMethod() {
-        return 1;
+    protected double protectedMethod() {
+        return somePublicField.method() + 1;
     }
     
     int defaultMethod(int someParameter) {
@@ -28,5 +28,11 @@ public class MyClass {
     
     public int publicMethod() {
         return 3;
+    }
+    
+    private class InnerClass {
+        private double method() {
+            return defaultField;
+        }
     }
 }

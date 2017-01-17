@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -18,8 +19,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.aurea.und.locate.PrivateMethod;
+import com.aurea.und.locate.FileLocator;
 import com.aurea.und.locate.Parameter;
+import com.aurea.und.locate.PrivateMethod;
 import com.aurea.und.locate.PrivateVariable;
 import com.scitools.understand.Database;
 import com.scitools.understand.Entity;
@@ -40,6 +42,8 @@ public class QueryDbTest {
     private PrivateMethod privateMethod;
     @Autowired
     private PrivateVariable privateVariable;
+    @Autowired
+    private FileLocator fileLocator;
     @Autowired
     private Parameter parameter;
     private Database database;
@@ -80,14 +84,16 @@ public class QueryDbTest {
         assertThat(maybeClass.isPresent()).isTrue();
         logReferences(maybeClass.get());
         Optional<Entity> maybeMethod = Arrays.stream(database.ents("private method"))
-                .filter(entity -> entity.name().equals("MyClass.undMethod1")).findAny();
+                .filter(entity -> entity.longname(true).equals("und.MyClass.InnerClass.method")).findAny();
         assertThat(maybeMethod.isPresent()).isTrue();
         logReferences(maybeMethod.get());
         assertThat(Arrays.stream(database.ents("variable")).map(Entity::name)
                 .anyMatch(name -> name.equals("MyClass.undSomeField"))).isTrue();
         assertThat(Arrays.stream(database.ents("parameter")).map(entity -> entity.longname(true))
                 .anyMatch(name -> name.equals("und.MyClass.undMethod1.someMethodParameter"))).isTrue();
-        assertThat(privateMethod.getEntities(database).size()).isEqualTo(3);
+        assertThat(privateMethod.getEntities(database).size()).isEqualTo(4);
+        assertThat(privateMethod.getEntities(database).stream().map(fileLocator::getFile).collect(Collectors.toSet())
+                .size()).isEqualTo(1);
         assertThat(privateVariable.getEntities(database).size()).isEqualTo(1);
         assertThat(parameter.getEntities(database).size()).isEqualTo(2);
     }
