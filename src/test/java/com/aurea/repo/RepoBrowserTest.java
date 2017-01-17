@@ -22,11 +22,11 @@ public class RepoBrowserTest {
     
     @Test
     public void downloadsPublicRepoFromGithub() throws Exception {
-        String publicRepoUrl = "https://github.com/lazcatluc/conway";
-        
-        localRepo = repoBrowser.downloadProject(publicRepoUrl);
+        localRepo = repoBrowser.downloadProject("https://github.com/lazcatluc/conway");
         
         assertThat(localRepo.exists()).isTrue();
+        
+        repoBrowser.updateFolder(localRepo);
     }
     
     @After
