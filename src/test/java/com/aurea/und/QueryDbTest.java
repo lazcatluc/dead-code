@@ -23,6 +23,7 @@ import com.aurea.und.locate.FileLocator;
 import com.aurea.und.locate.Parameter;
 import com.aurea.und.locate.PrivateMethod;
 import com.aurea.und.locate.PrivateVariable;
+import com.aurea.und.locate.unused.UnusedParameter;
 import com.aurea.und.locate.unused.UnusedPrivateMethod;
 import com.aurea.und.locate.unused.UnusedPrivateVariable;
 import com.scitools.understand.Database;
@@ -48,6 +49,8 @@ public class QueryDbTest {
     private PrivateVariable privateVariable;
     @Autowired
     private UnusedPrivateVariable unusedPrivateVariable;
+    @Autowired
+    private UnusedParameter unusedParameter;
     @Autowired
     private FileLocator fileLocator;
     @Autowired
@@ -100,8 +103,11 @@ public class QueryDbTest {
         assertThat(maybeVariable.isPresent()).isTrue();
         LOGGER.info(Arrays.asList(maybeVariable.get().ib(null)));
         
-        assertThat(Arrays.stream(database.ents("parameter")).map(entity -> entity.longname(true))
-                .anyMatch(name -> name.equals("und.MyClass.undMethod1.someMethodParameter"))).isTrue();
+        Optional<Entity> maybeParameter = Arrays.stream(database.ents("parameter")).filter(
+                entity -> entity.longname(true).equals("und.MyClass.defaultMethod.someParameter")).findAny();
+        assertThat(maybeParameter.isPresent()).isTrue();
+        LOGGER.info(Arrays.asList(maybeParameter.get().ib(null)));
+        
         assertThat(privateMethod.getEntities(database).size()).isEqualTo(7);
         assertThat(privateMethod.getEntities(database).stream().map(fileLocator::getFile).collect(Collectors.toSet())
                 .size()).isEqualTo(1);
@@ -109,6 +115,7 @@ public class QueryDbTest {
         assertThat(parameter.getEntities(database).size()).isEqualTo(2);
         assertThat(unusedPrivateMethod.getEntities(database).size()).isEqualTo(2);
         assertThat(unusedPrivateVariable.getEntities(database).size()).isEqualTo(2);
+        assertThat(unusedParameter.getEntities(database).size()).isEqualTo(1);
     }
 
     private void logReferences(Entity method) {
