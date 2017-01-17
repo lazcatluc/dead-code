@@ -3,13 +3,16 @@ package com.aurea.und;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -19,17 +22,22 @@ import com.scitools.understand.Understand;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class QueryDbTest extends UndTestFixture {
+public class QueryDbTest {
     @Autowired
     private CreateCommand createCommand;
     @Autowired
     private AnalyzeCommand analyzeCommand;
     private Database database;
+    @Value("${undCommand}")
+    private String undCommand;
+    @Value("${workFolder}")
+    private String currentFolder;
+    private File executionFolder;
 
     @Before
-    @Override
     public void setUp() throws Exception {
-        super.setUp();
+        executionFolder = new File(currentFolder() + "/src/test/" + UUID.randomUUID());
+        executionFolder.mkdirs();
         createCommand.createUdb(executionFolder(), currentFolder() + "/src/und/java", "myDb.udb").waitFor();
         File udbFileToAnalyze = new File(executionFolder(), "myDb.udb");
         analyzeCommand.analyze(executionFolder(), udbFileToAnalyze).waitFor();
@@ -38,10 +46,14 @@ public class QueryDbTest extends UndTestFixture {
     }
 
     @After
-    @Override
     public void cleanUp() throws Exception {
         database.close();
-        super.cleanUp();
+        if (executionFolder.exists()) {
+            for (File file : executionFolder.listFiles()) {
+                file.delete();
+            }
+        }
+        executionFolder.delete();
     }
 
     @Test
@@ -58,4 +70,13 @@ public class QueryDbTest extends UndTestFixture {
                 .anyMatch(name -> name.equals("und.MyClass.undMethod1.someMethodParameter"))).isTrue();
         
     }
+
+    protected String currentFolder() throws IOException {
+        return new File(currentFolder).getCanonicalPath();
+    }
+
+    protected File executionFolder() {
+        return executionFolder;
+    }
+
 }
