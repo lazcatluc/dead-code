@@ -87,20 +87,21 @@ public class QueryDbTest {
         assertThat(maybeClass.isPresent()).isTrue();
         logReferences(maybeClass.get());
         Optional<Entity> maybeMethod = Arrays.stream(database.ents("private method"))
-                .filter(entity -> entity.longname(true).equals("und.MyClass.undMethod1")).findAny();
+                .filter(entity -> entity.longname(true).equals("und.MyClass.unusedStaticMethod")).findAny();
         assertThat(maybeMethod.isPresent()).isTrue();
         
         logReferences(maybeMethod.get());
+        LOGGER.info(Arrays.asList(maybeMethod.get().ib(null)));
         assertThat(Arrays.stream(database.ents("variable")).map(Entity::name)
                 .anyMatch(name -> name.equals("MyClass.undSomeField"))).isTrue();
         assertThat(Arrays.stream(database.ents("parameter")).map(entity -> entity.longname(true))
                 .anyMatch(name -> name.equals("und.MyClass.undMethod1.someMethodParameter"))).isTrue();
-        assertThat(privateMethod.getEntities(database).size()).isEqualTo(4);
+        assertThat(privateMethod.getEntities(database).size()).isEqualTo(6);
         assertThat(privateMethod.getEntities(database).stream().map(fileLocator::getFile).collect(Collectors.toSet())
                 .size()).isEqualTo(1);
         assertThat(privateVariable.getEntities(database).size()).isEqualTo(1);
         assertThat(parameter.getEntities(database).size()).isEqualTo(2);
-        assertThat(unusedPrivateMethod.getEntities(database).size()).isEqualTo(1);
+        assertThat(unusedPrivateMethod.getEntities(database).size()).isEqualTo(2);
     }
 
     private void logReferences(Entity method) {

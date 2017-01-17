@@ -6,6 +6,14 @@ public class MyClass {
     protected String protectedField = "protected";
     public final InnerClass somePublicField = new InnerClass();
     
+    private static int unusedStaticMethod() {
+        return 2;
+    }
+    
+    private static int usedStaticMethod() {
+        return 3;
+    }
+    
     private String undMethod1(Integer someMethodParameter) {
         return methodReferenced();
     }
@@ -33,7 +41,7 @@ public class MyClass {
     
     private class InnerClass {
         private double method() {
-            return defaultField;
+            return defaultField + usedStaticMethod();
         }
     }
 }
