@@ -22,8 +22,8 @@ public class MyClass {
         return 1;
     }
     
-    int defaultMethod() {
-        return 2;
+    int defaultMethod(int someParameter) {
+        return 2 + someParameter;
     }
     
     public int publicMethod() {
