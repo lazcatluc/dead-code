@@ -20,7 +20,7 @@ public class CreateCommandTest extends UndTestFixture {
     @Test
     public void generatesDbForThisPackage() throws Exception {
         Process process = createCommand.createUdb(executionFolder(), currentFolder()
-                + "/src/test/java/com/aurea/und", "myDb.udb");
+                + "/src/und/java", "myDb.udb");
         process.waitFor();
 
         assertThat(new File(executionFolder(), "myDb.udb").exists()).isTrue();

@@ -35,3 +35,12 @@ dependencies {
 	runtime('com.h2database:h2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+test {
+    afterTest { desc, result -> 
+        println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+    }
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}

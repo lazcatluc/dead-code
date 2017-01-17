@@ -23,7 +23,7 @@ public class AnalyzeCommandTest extends UndTestFixture {
     @Test
     public void canAnalyzeCreatedProject() throws Exception {
         Process createProcess = createCommand.createUdb(executionFolder(),
-                currentFolder() + "/src/test/java/com/aurea/und", "myDb.udb");
+                currentFolder() + "/src/und/java", "myDb.udb");
         createProcess.waitFor();
 
         Process analyzeProcess = analyzeCommand.analyze(executionFolder(), new File(executionFolder(), "myDb.udb"));
