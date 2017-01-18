@@ -32,6 +32,13 @@ public class RestProjectTest {
         
         assertThat(newRestProject().getProjectId()).isEqualTo(1L);
     }
+    
+    @Test
+    public void getsUrlOfProject() throws Exception {
+        project.setUrl("some-url");
+        
+        assertThat(newRestProject().getUrl()).isEqualTo("some-url");
+    }
 
     private RestProject newRestProject() {
         return new RestProject(project);
@@ -46,10 +53,9 @@ public class RestProjectTest {
 
     @Test
     public void getsTimestampOfAction() throws Exception {
-        LocalDateTime time = LocalDateTime.now().minusDays(1);
-        updateAction.setActionTime(time);
+        updateAction.setActionTime(LocalDateTime.MIN);
         
-        assertThat(newRestProject().getLastUpdated()).isEqualTo(time);
+        assertThat(newRestProject().getLastUpdated()).isEqualTo("-999999999-01-01T00:00");
     }
     
     @Test

@@ -112,6 +112,7 @@ public class ProjectAnalyzer {
 
     public Project addProject(String projectUrl) {
         Project project = modelFactory.newProject();
+        project.setUrl(projectUrl);
         project.addUpdate(modelFactory.newUpdateAction());
         Project savedProject = projectRepository.save(project);
         executor.execute(() -> addProject(savedProject, projectUrl));

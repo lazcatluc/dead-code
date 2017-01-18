@@ -3,7 +3,6 @@ package com.aurea.repo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
-import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Test;
@@ -31,17 +30,7 @@ public class RepoBrowserTest {
     
     @After
     public void cleanUp() throws Exception {
-        cleanUpRecursively(localRepo);
-    }
-
-    private void cleanUpRecursively(File currentFile) {
-        if (currentFile == null) {
-            return;
-        }
-        if (currentFile.isDirectory()) {
-            Arrays.stream(currentFile.listFiles()).forEach(this::cleanUpRecursively);
-        }
-        currentFile.delete();
+        Cleaner.cleanUpRecursively(localRepo);
     }
 
 }

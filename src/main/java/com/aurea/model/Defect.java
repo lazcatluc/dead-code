@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Defect implements Serializable {
 
@@ -22,6 +24,7 @@ public class Defect implements Serializable {
     private int defectLine;
     private int defectColumn;
     private String entityName;
+    @JsonIgnore
     private UpdateAction updateAction;
 
     public Long getDefectId() {

@@ -25,6 +25,13 @@ public class ProjectTest {
     }
     
     @Test
+    public void getSetUrl() throws Exception {
+        project.setUrl("/some/path");
+        
+        assertThat(project.getUrl()).isEqualTo("/some/path");
+    }    
+    
+    @Test
     public void getUpdates() throws Exception {
         project.setUpdates(Arrays.asList(new UpdateAction()));
         

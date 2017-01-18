@@ -2,10 +2,12 @@ package com.aurea.repo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ public class ProjectAnalyzerITest {
     private ThreadPoolTaskExecutor executor;
     @Autowired
     private InitializedProjects projectRepository;
+    private Project project;
 
     @Test
     public void analyzesPublicGithubProjectAndCompletes() throws Exception {
@@ -40,6 +43,15 @@ public class ProjectAnalyzerITest {
 
         LOGGER.info("Projects: " + projects);
         assertThat(projects.size()).isEqualTo(1);
-        assertThat(projects.get(0).getLastUpdate().get().getCurrentStatus()).isNotEqualTo(ProjectStatus.PROCESSING);
+        project = projects.get(0);
+        assertThat(project.getLastUpdate().get().getCurrentStatus()).isNotEqualTo(ProjectStatus.PROCESSING);
     }
+    
+    @After
+    public void cleanUp() {
+        if (project != null && project.getPath() != null) {
+            Cleaner.cleanUpRecursively(new File(project.getPath()));
+        }
+    }
+
 }

@@ -22,6 +22,7 @@ public class Project implements Serializable {
     @GeneratedValue
     private Long projectId;
     private String path;
+    private String url;
     @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @OrderBy("actionId")
     private List<UpdateAction> updates = new ArrayList<>();
@@ -40,6 +41,14 @@ public class Project implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public List<UpdateAction> getUpdates() {
@@ -88,7 +97,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "Project [projectId=" + projectId + ", path=" + path + ", getLastUpdate()=" + getLastUpdate() + "]";
+        return "Project [projectId=" + projectId + ", path=" + path + ", url=" + url + ", getLastUpdate()=" + getLastUpdate() + "]";
     }
 
 }
