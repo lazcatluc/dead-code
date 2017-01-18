@@ -109,4 +109,10 @@ public class UpdateAction implements Serializable {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "UpdateAction [actionId=" + actionId + ", actionTime=" + actionTime + ", currentStatus=" + currentStatus
+                + ", defects=" + defects + ", failureReason=" + failureReason + "]";
+    }
+
 }

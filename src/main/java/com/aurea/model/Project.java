@@ -49,11 +49,11 @@ public class Project implements Serializable {
     public void setUpdates(List<UpdateAction> updates) {
         this.updates = new ArrayList<>(updates);
     }
-    
+
     public void addUpdate(UpdateAction updateAction) {
         updates.add(updateAction);
     }
-    
+
     public Optional<UpdateAction> getLastUpdate() {
         if (updates.isEmpty()) {
             return Optional.empty();
@@ -84,6 +84,11 @@ public class Project implements Serializable {
         } else if (!projectId.equals(other.projectId))
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Project [projectId=" + projectId + ", path=" + path + ", getLastUpdate()=" + getLastUpdate() + "]";
     }
 
 }

@@ -105,4 +105,10 @@ public class Defect implements Serializable {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Defect [defectId=" + defectId + ", defectType=" + defectType + ", projectFile=" + projectFile
+                + ", defectLine=" + defectLine + ", defectColumn=" + defectColumn + ", entityName=" + entityName + "]";
+    }
+
 }
