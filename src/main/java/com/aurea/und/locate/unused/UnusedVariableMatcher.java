@@ -2,11 +2,11 @@ package com.aurea.und.locate.unused;
 
 import org.springframework.stereotype.Service;
 
-import com.scitools.understand.Entity;
+import com.aurea.repo.ProjectEntity;
 
 @Service
 class UnusedVariableMatcher {
-    boolean matches(Entity entity) {
+    boolean matches(ProjectEntity entity) {
         String[] ib = entity.ib(null);
         boolean reachedReferences = false;
         for (int i = 0; i < ib.length; i++) {

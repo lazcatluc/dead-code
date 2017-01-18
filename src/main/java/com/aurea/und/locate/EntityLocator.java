@@ -1,27 +1,26 @@
 package com.aurea.und.locate;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.scitools.understand.Database;
-import com.scitools.understand.Entity;
+import com.aurea.repo.EntityRepo;
+import com.aurea.repo.ProjectEntity;
 
 public abstract class EntityLocator {
 
     protected abstract String entityLocator();
 
-    public List<Entity> getEntities(Database database) {
-        return Arrays.stream(database.ents(entityLocator())).filter(this::isOwnEntity).filter(this::matches)
+    public List<ProjectEntity> getEntities(EntityRepo entityRepo) {
+        return entityRepo.ents(entityLocator()).filter(this::isOwnEntity).filter(this::matches)
                 .collect(Collectors.toList());
     }
 
-    protected boolean isOwnEntity(Entity entity) {
+    protected boolean isOwnEntity(ProjectEntity entity) {
         String name = entity.longname(true);
         return !name.startsWith("java.") && !name.startsWith("javax.") && !name.startsWith("sun.");
     }
 
-    protected boolean matches(Entity entity) {
+    protected boolean matches(ProjectEntity entity) {
         return true;
     }
 }

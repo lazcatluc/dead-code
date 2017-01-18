@@ -3,8 +3,8 @@ package com.aurea.und.locate.unused;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import com.aurea.repo.ProjectEntity;
 import com.aurea.und.locate.PrivateMethod;
-import com.scitools.understand.Entity;
 
 @Service
 public class UnusedPrivateMethod extends PrivateMethod {
@@ -12,7 +12,7 @@ public class UnusedPrivateMethod extends PrivateMethod {
     private static final Logger LOGGER = Logger.getLogger(UnusedPrivateMethod.class);
 
     @Override
-    protected boolean matches(Entity entity) {
+    protected boolean matches(ProjectEntity entity) {
         LOGGER.debug("Trying entity " + entity.name());
 
         String[] ib = entity.ib(null);

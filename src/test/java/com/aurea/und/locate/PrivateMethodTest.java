@@ -8,14 +8,14 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.scitools.understand.Entity;
+import com.aurea.repo.ProjectEntity;
 
 
 public class PrivateMethodTest {
     
     private PrivateMethod privateMethod;
     @Mock
-    private Entity entity;
+    private ProjectEntity entity;
     
     @Before
     public void setUp() {

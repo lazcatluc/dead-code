@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -19,17 +18,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.aurea.und.locate.FileLocator;
+import com.aurea.repo.EntityRepo;
+import com.aurea.repo.EntityRepoFactory;
+import com.aurea.repo.ProjectEntity;
 import com.aurea.und.locate.Parameter;
 import com.aurea.und.locate.PrivateMethod;
 import com.aurea.und.locate.PrivateVariable;
 import com.aurea.und.locate.unused.UnusedParameter;
 import com.aurea.und.locate.unused.UnusedPrivateMethod;
 import com.aurea.und.locate.unused.UnusedPrivateVariable;
-import com.scitools.understand.Database;
-import com.scitools.understand.Entity;
 import com.scitools.understand.Reference;
-import com.scitools.understand.Understand;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -52,10 +50,10 @@ public class QueryDbTest {
     @Autowired
     private UnusedParameter unusedParameter;
     @Autowired
-    private FileLocator fileLocator;
-    @Autowired
     private Parameter parameter;
-    private Database database;
+    @Autowired
+    private EntityRepoFactory repoFactory;
+    private EntityRepo entityRepo;
     @Value("${undCommand}")
     private String undCommand;
     @Value("${workFolder}")
@@ -70,12 +68,12 @@ public class QueryDbTest {
         File udbFileToAnalyze = new File(executionFolder(), "myDb.udb");
         analyzeCommand.analyze(executionFolder(), udbFileToAnalyze).waitFor();
 
-        database = Understand.open(udbFileToAnalyze.getAbsolutePath());
+        entityRepo = repoFactory.newEntityRepo(udbFileToAnalyze.getAbsolutePath());
     }
 
     @After
     public void cleanUp() throws Exception {
-        database.close();
+        entityRepo.close();
         if (executionFolder.exists()) {
             for (File file : executionFolder.listFiles()) {
                 file.delete();
@@ -86,39 +84,37 @@ public class QueryDbTest {
 
     @Test
     public void canQueryCreatedDatabase() throws Exception {
-        assertThat(Arrays.stream(database.ents("package")).map(Entity::name).anyMatch(name -> name.equals("und")))
+        assertThat(entityRepo.ents("package").map(ProjectEntity::name).anyMatch(name -> name.equals("und")))
                 .isTrue();
-        Optional<Entity> maybeClass = Arrays.stream(database.ents("class"))
+        Optional<ProjectEntity> maybeClass = entityRepo.ents("class")
                 .filter(entity -> entity.name().equals("und.MyClass")).findAny();
         assertThat(maybeClass.isPresent()).isTrue();
         logReferences(maybeClass.get());
-        Optional<Entity> maybeMethod = Arrays.stream(database.ents("private method"))
+        Optional<ProjectEntity> maybeMethod = entityRepo.ents("private method")
                 .filter(entity -> entity.longname(true).equals("und.MyClass.unusedStaticMethod")).findAny();
         assertThat(maybeMethod.isPresent()).isTrue();
         
         logReferences(maybeMethod.get());
         LOGGER.info(Arrays.asList(maybeMethod.get().ib(null)));
-        Optional<Entity> maybeVariable = Arrays.stream(database.ents("variable")).filter(
+        Optional<ProjectEntity> maybeVariable = entityRepo.ents("variable").filter(
                 entity -> entity.name().equals("MyClass.undSomeField")).findFirst();
         assertThat(maybeVariable.isPresent()).isTrue();
         LOGGER.info(Arrays.asList(maybeVariable.get().ib(null)));
         
-        Optional<Entity> maybeParameter = Arrays.stream(database.ents("parameter")).filter(
+        Optional<ProjectEntity> maybeParameter = entityRepo.ents("parameter").filter(
                 entity -> entity.longname(true).equals("und.MyClass.defaultMethod.someParameter")).findAny();
         assertThat(maybeParameter.isPresent()).isTrue();
         LOGGER.info(Arrays.asList(maybeParameter.get().ib(null)));
         
-        assertThat(privateMethod.getEntities(database).size()).isEqualTo(7);
-        assertThat(privateMethod.getEntities(database).stream().map(fileLocator::getFile).collect(Collectors.toSet())
-                .size()).isEqualTo(1);
-        assertThat(privateVariable.getEntities(database).size()).isEqualTo(3);
-        assertThat(parameter.getEntities(database).size()).isEqualTo(2);
-        assertThat(unusedPrivateMethod.getEntities(database).size()).isEqualTo(2);
-        assertThat(unusedPrivateVariable.getEntities(database).size()).isEqualTo(2);
-        assertThat(unusedParameter.getEntities(database).size()).isEqualTo(1);
+        assertThat(privateMethod.getEntities(entityRepo).size()).isEqualTo(7);
+        assertThat(privateVariable.getEntities(entityRepo).size()).isEqualTo(3);
+        assertThat(parameter.getEntities(entityRepo).size()).isEqualTo(2);
+        assertThat(unusedPrivateMethod.getEntities(entityRepo).size()).isEqualTo(2);
+        assertThat(unusedPrivateVariable.getEntities(entityRepo).size()).isEqualTo(2);
+        assertThat(unusedParameter.getEntities(entityRepo).size()).isEqualTo(1);
     }
 
-    private void logReferences(Entity method) {
+    private void logReferences(ProjectEntity method) {
         Reference[] refs = method.refs(null, null, false);
         LOGGER.info("Getting references for method: " + refs.length);
         Arrays.stream(refs)

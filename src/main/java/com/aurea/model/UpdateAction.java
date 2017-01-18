@@ -27,7 +27,7 @@ public class UpdateAction implements Serializable {
     private Project project;
     private LocalDateTime actionTime = LocalDateTime.now();
     @Enumerated(EnumType.STRING)
-    private ProjectStatus currentStatus = ProjectStatus.IN_PROGRESS;
+    private ProjectStatus currentStatus = ProjectStatus.PROCESSING;
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Defect> defects = new ArrayList<>();
     private String failureReason;
