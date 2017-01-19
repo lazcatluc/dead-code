@@ -35,6 +35,18 @@ public class ProjectEndpointTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         LOGGER.info(response.getBody());
+        
+        response = restTemplate.getForEntity("/api/projects/1", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        LOGGER.info(response.getBody());
+        
+        response = restTemplate.getForEntity("/api/projects/2", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        LOGGER.info(response.getBody());
+        
+        response = restTemplate.postForEntity("/api/projects/1", "", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        LOGGER.info(response.getBody());
     }
 
 }

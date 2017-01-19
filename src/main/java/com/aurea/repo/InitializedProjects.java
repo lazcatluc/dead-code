@@ -22,6 +22,9 @@ public class InitializedProjects {
     }
     
     private Project initialize(Project findOne) {
+        if (findOne == null) {
+            return null;
+        }
         findOne.getLastUpdate().ifPresent(updateAction -> updateAction.getDefects().size());
         return findOne;
     }

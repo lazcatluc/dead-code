@@ -7,12 +7,14 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.aurea.model.Project;
 import com.aurea.repo.InitializedProjects;
 import com.aurea.und.ProjectAnalyzer;
 
@@ -35,5 +37,28 @@ public class ProjectEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public RestProject addProject(ProjectUrl projectUrl) {
         return new RestProject(projectAnalyzer.addProject(projectUrl.getUrl()));
+    }
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{projectId}")
+    public RestProject getAllProjects(@PathParam("projectId") Long projectId) {
+        Project project = projectRepository.findOneInitialized(projectId);
+        if (project == null) {
+            throw new ProjectNotFoundException(projectId);
+        }
+        return new RestProject(project);
+    }
+    
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{projectId}")
+    public RestProject updateProject(@PathParam("projectId") Long projectId) {
+        Project project = projectRepository.findOneInitialized(projectId);
+        if (project == null) {
+            throw new ProjectNotFoundException(projectId);
+        }
+        Project updatedProject = projectAnalyzer.updateProject(project);
+        return new RestProject(updatedProject);
     }
 }
