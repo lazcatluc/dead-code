@@ -69,6 +69,10 @@ public class Project implements Serializable {
         }
         return Optional.of(updates.get(updates.size() - 1));
     }
+    
+    public ProjectStatus getCurrentStatus() {
+        return getLastUpdate().get().getCurrentStatus();
+    }
 
     @Override
     public int hashCode() {

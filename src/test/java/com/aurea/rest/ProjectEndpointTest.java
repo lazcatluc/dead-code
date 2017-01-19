@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -21,9 +22,11 @@ public class ProjectEndpointTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+    @Autowired
+    private ThreadPoolTaskExecutor executor;
 
-    @Test
-    public void getsProjects() {
+    @Test(timeout = 30000)
+    public void getsProjects() throws InterruptedException {
         ProjectUrl projectUrl = new ProjectUrl();
         projectUrl.setUrl("https://github.com/lazcatluc/conway");
         ResponseEntity<RestProject> addedProject = restTemplate.postForEntity("/api/projects",
@@ -43,6 +46,14 @@ public class ProjectEndpointTest {
         response = restTemplate.getForEntity("/api/projects/2", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         LOGGER.info(response.getBody());
+        
+        response = restTemplate.postForEntity("/api/projects/1", "", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        LOGGER.info(response.getBody());
+        
+        while (executor.getActiveCount() > 0) {
+            Thread.sleep(1000);
+        }
         
         response = restTemplate.postForEntity("/api/projects/1", "", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

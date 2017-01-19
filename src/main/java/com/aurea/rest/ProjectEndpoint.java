@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.aurea.model.Project;
+import com.aurea.model.ProjectStatus;
 import com.aurea.repo.InitializedProjects;
 import com.aurea.und.ProjectAnalyzer;
 
@@ -57,6 +58,9 @@ public class ProjectEndpoint {
         Project project = projectRepository.findOneInitialized(projectId);
         if (project == null) {
             throw new ProjectNotFoundException(projectId);
+        }
+        if (project.getCurrentStatus() == ProjectStatus.PROCESSING) {
+            throw new AnalysisAlreadyInProgressException(projectId);
         }
         Project updatedProject = projectAnalyzer.updateProject(project);
         return new RestProject(updatedProject);
