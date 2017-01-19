@@ -17,6 +17,7 @@ apply plugin: 'org.springframework.boot'
 jar {
 	baseName = 'dead-code'
 	version = '0.0.1-SNAPSHOT'
+	archiveName = 'dead-code.jar'
 }
 
 sourceCompatibility = 1.8

@@ -6,8 +6,8 @@ public class ProjectNotFoundException extends IllegalArgumentException {
     
     private final JsonExceptionMessage jsonExceptionMessage;
 
-    public ProjectNotFoundException(Long projectId) {
-        super(projectId.toString());
+    public ProjectNotFoundException(String projectId) {
+        super(projectId);
         jsonExceptionMessage = new JsonExceptionMessage();
         jsonExceptionMessage.setError("Project not found: "+projectId);
     }

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.aurea.model.Project;
 
 @Repository
-public interface ProjectRepository extends CrudRepository<Project, Long> {
+public interface ProjectRepository extends CrudRepository<Project, String> {
     
 }

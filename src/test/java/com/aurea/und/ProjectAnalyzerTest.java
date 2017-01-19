@@ -140,7 +140,7 @@ public class ProjectAnalyzerTest {
 
     @Test
     public void whenGitFailsProjectGoesToFailedStatus() throws Exception {
-        when(repoBrowser.downloadProject(any(String.class))).thenThrow(mock(GitAPIException.class));
+        when(repoBrowser.downloadProject(any(String.class), any(String.class))).thenThrow(mock(GitAPIException.class));
 
         addSomeGitRepoAwatingTermination();
 
@@ -151,7 +151,7 @@ public class ProjectAnalyzerTest {
     public void whenGitFailsProjectLogsReason() throws Exception {
         GitAPIException exception = mock(GitAPIException.class);
         when(exception.getMessage()).thenReturn("some-exception");
-        when(repoBrowser.downloadProject(any(String.class))).thenThrow(exception);
+        when(repoBrowser.downloadProject(any(String.class), any(String.class))).thenThrow(exception);
 
         addSomeGitRepoAwatingTermination();
 
@@ -278,7 +278,7 @@ public class ProjectAnalyzerTest {
     
     private File repoBrowserFile() throws GitAPIException {
         File projectFile = new File("some-file");
-        when(repoBrowser.downloadProject(any(String.class))).thenReturn(projectFile);
+        when(repoBrowser.downloadProject(any(String.class), any(String.class))).thenReturn(projectFile);
         return projectFile;
     }
 

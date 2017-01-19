@@ -17,7 +17,7 @@ public class InitializedProjects {
     @Autowired
     private ProjectRepository projectRepository;
     
-    public Project findOneInitialized(Long id) {
+    public Project findOneInitialized(String id) {
         return initialize(projectRepository.findOne(id));
     }
     

@@ -28,9 +28,9 @@ public class RestProjectTest {
 
     @Test
     public void getsProjectIdOfProject() {
-        project.setProjectId(1L);
+        project.setProjectId("1");
         
-        assertThat(newRestProject().getProjectId()).isEqualTo(1L);
+        assertThat(newRestProject().getProjectId()).isEqualTo("1");
     }
     
     @Test

@@ -85,7 +85,7 @@ public class ProjectTest {
     @Test
     public void isNotEqualToProjectWithSetId() throws Exception {
         Project other = new Project();
-        other.setProjectId(1L);
+        other.setProjectId("1");
         
         assertThat(project).isNotEqualTo(other);
     }     
@@ -97,27 +97,27 @@ public class ProjectTest {
     
     @Test
     public void isEqualToProjectWithSameId() throws Exception {
-        project.setProjectId(1L);
+        project.setProjectId("1");
         Project expected = new Project();
-        expected.setProjectId(1L);
+        expected.setProjectId("1");
         
         assertThat(project).isEqualTo(expected);
     }    
 
     @Test
     public void isEqualToProjectWithDifferentId() throws Exception {
-        project.setProjectId(1L);
+        project.setProjectId("1");
         Project expected = new Project();
-        expected.setProjectId(2L);
+        expected.setProjectId("2");
         
         assertThat(project).isNotEqualTo(expected);
     }
     
     @Test
     public void hasSameHashCodeAsProjectWithSameId() throws Exception {
-        project.setProjectId(1L);
+        project.setProjectId("1");
         Project expected = new Project();
-        expected.setProjectId(1L);
+        expected.setProjectId("1");
         
         assertThat(project.hashCode()).isEqualTo(expected.hashCode());
     }    

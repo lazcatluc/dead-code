@@ -2,9 +2,7 @@ package com.aurea.repo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -12,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.aurea.model.Project;
@@ -28,17 +25,15 @@ public class ProjectAnalyzerITest {
     @Autowired
     private ProjectAnalyzer projectAnalyzer;
     @Autowired
-    private ThreadPoolTaskExecutor executor;
-    @Autowired
     private InitializedProjects projectRepository;
+    @Autowired
+    private ProjectCleaner projectCleaner;
     private Project project;
 
     @Test
     public void analyzesPublicGithubProjectAndCompletes() throws Exception {
         projectAnalyzer.addProject("https://github.com/lazcatluc/conway");
-        executor.shutdown();
-        executor.getThreadPoolExecutor().awaitTermination(30, TimeUnit.SECONDS);
-
+        Thread.sleep(30000);
         List<Project> projects = projectRepository.findAllInitialized();
 
         LOGGER.info("Projects: " + projects);
@@ -49,8 +44,8 @@ public class ProjectAnalyzerITest {
     
     @After
     public void cleanUp() {
-        if (project != null && project.getPath() != null) {
-            Cleaner.cleanUpRecursively(new File(project.getPath()));
+        if (project != null) {
+            projectCleaner.clean(project.getProjectId());
         }
     }
 

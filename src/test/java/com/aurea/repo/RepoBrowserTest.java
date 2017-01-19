@@ -21,7 +21,7 @@ public class RepoBrowserTest {
     
     @Test
     public void downloadsPublicRepoFromGithub() throws Exception {
-        localRepo = repoBrowser.downloadProject("https://github.com/lazcatluc/conway");
+        localRepo = repoBrowser.downloadProject("https://github.com/lazcatluc/conway", "1");
         
         assertThat(localRepo.exists()).isTrue();
         

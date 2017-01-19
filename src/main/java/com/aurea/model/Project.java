@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -19,19 +18,18 @@ public class Project implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
-    private Long projectId;
+    private String projectId;
     private String path;
     private String url;
     @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @OrderBy("actionId")
     private List<UpdateAction> updates = new ArrayList<>();
 
-    public Long getProjectId() {
+    public String getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Long projectId) {
+    public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
 

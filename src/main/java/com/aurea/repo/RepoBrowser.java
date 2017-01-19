@@ -2,7 +2,6 @@ package com.aurea.repo;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -19,14 +18,11 @@ public class RepoBrowser {
      * Downloads a GIT repo
      * 
      * @throws GitAPIException 
-     * @throws TransportException 
-     * @throws InvalidRemoteException
      * 
      * @return the folder that we have to parse.
      */
-    public File downloadProject(String projectUrl) throws GitAPIException {
-        String uuid = UUID.randomUUID().toString();
-        File projectFolder = new File(workFolder, uuid);
+    public File downloadProject(String projectUrl, String projectId) throws GitAPIException {
+        File projectFolder = new File(workFolder, projectId);
         
         Git.cloneRepository()
                 .setURI(projectUrl)

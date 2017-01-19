@@ -2,6 +2,7 @@ package com.aurea.und;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -112,6 +113,7 @@ public class ProjectAnalyzer {
 
     public Project addProject(String projectUrl) {
         Project project = modelFactory.newProject();
+        project.setProjectId(UUID.randomUUID().toString());
         project.setUrl(projectUrl);
         project.addUpdate(modelFactory.newUpdateAction());
         Project savedProject = projectRepository.save(project);
@@ -133,7 +135,8 @@ public class ProjectAnalyzer {
 
     private void addProject(Project project, String projectUrl) {
         try {
-            File localRepo = repoBrowser.downloadProject(projectUrl);
+            File localRepo = repoBrowser.downloadProject(projectUrl, project.getProjectId());
+            project.setProjectId(localRepo.getName());
             project.setPath(localRepo.getCanonicalPath());
             Project savedProject = projectRepository.save(project);
             createProjectUdb(savedProject);

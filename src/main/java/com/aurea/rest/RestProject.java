@@ -17,7 +17,7 @@ public class RestProject implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    private Long projectId;
+    private String projectId;
     private String url;
     private ProjectStatus status;
     private String lastUpdated;
@@ -40,7 +40,7 @@ public class RestProject implements Serializable {
         return url;
     }
     
-    public Long getProjectId() {
+    public String getProjectId() {
         return projectId;
     }
 
