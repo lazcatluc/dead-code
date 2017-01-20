@@ -19,6 +19,7 @@ public class RestProject implements Serializable {
     
     private String projectId;
     private String url;
+    private String addedAt;
     private ProjectStatus status;
     private String lastUpdated;
     private List<Defect> defects;
@@ -27,9 +28,17 @@ public class RestProject implements Serializable {
         
     }
     
-    public RestProject(Project project) {
+    public static RestProject fromProject(Project project) {
+        if (project.getCurrentStatus() == ProjectStatus.FAILED) {
+            return new RestProjectWithReason(project);
+        }
+        return new RestProject(project);
+    }
+    
+    private RestProject(Project project) {
         projectId = project.getProjectId();
         url = project.getUrl();
+        addedAt = project.getAddedAt().toString();
         UpdateAction updateAction = project.getLastUpdate().get();
         status = updateAction.getCurrentStatus();
         lastUpdated = updateAction.getActionTime().toString();
@@ -51,6 +60,10 @@ public class RestProject implements Serializable {
     public String getLastUpdated() {
         return lastUpdated;
     }
+    
+    public String getAddedAt() {
+        return addedAt;
+    }
 
     public List<Defect> getDefects() {
         return Collections.unmodifiableList(defects);
@@ -60,6 +73,21 @@ public class RestProject implements Serializable {
     public String toString() {
         return "RestProject [projectId=" + projectId + ", status=" + status + ", lastUpdated=" + lastUpdated
                 + ", defects=" + defects + "]";
+    }
+    
+    @XmlRootElement(name = "project")
+    public static class RestProjectWithReason extends RestProject {
+        private static final long serialVersionUID = 8887043527651873602L;
+        private String reason;
+
+        private RestProjectWithReason(Project project) {
+            super(project);
+            this.reason = project.getLastUpdate().get().getFailureReason();
+        }
+        
+        public String getReason() {
+            return reason;
+        }
     }
 
 }

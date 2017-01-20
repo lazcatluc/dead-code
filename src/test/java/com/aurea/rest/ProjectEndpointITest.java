@@ -27,7 +27,7 @@ public class ProjectEndpointITest {
     @Test
     public void getsProjects() throws InterruptedException {
         ProjectUrl projectUrl = new ProjectUrl();
-        projectUrl.setUrl("https://github.com/lazcatluc/conway");
+        projectUrl.setUrl("https://github.com/lazcatluc/unused.git");
         ResponseEntity<RestProject> addedProject = restTemplate.postForEntity("/api/projects",
                 projectUrl, RestProject.class);
         assertThat(addedProject.getStatusCode()).isEqualTo(HttpStatus.OK);

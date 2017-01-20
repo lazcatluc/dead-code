@@ -182,15 +182,15 @@ public class ProjectAnalyzer {
 
     private void findDefects(Project project, File udbFileToAnalyze) {
         try (EntityRepo entityRepo = entityRepoFactory.newEntityRepo(udbFileToAnalyze.getCanonicalPath())) {
+            UpdateAction action = modelFactory.newUpdateAction();
+            project.addUpdate(action);
             unusedPrivateVariable.getEntities(entityRepo)
                     .forEach(entity -> logProjectDefect(project, entity, DefectType.UNUSED_PRIVATE_VARIABLE));
             unusedPrivateMethod.getEntities(entityRepo)
                     .forEach(entity -> logProjectDefect(project, entity, DefectType.UNUSED_PRIVATE_METHOD));
             unusedParameter.getEntities(entityRepo)
                     .forEach(entity -> logProjectDefect(project, entity, DefectType.UNUSED_PARAMETER));
-            UpdateAction action = modelFactory.newUpdateAction();
             action.setCurrentStatus(ProjectStatus.COMPLETED);
-            project.addUpdate(action);
             projectRepository.save(project);
         } catch (IOException e) {
             LOGGER.error(e);
@@ -199,11 +199,19 @@ public class ProjectAnalyzer {
     }
 
     private void logProjectDefect(Project project, ProjectEntity entity, DefectType defectType) {
+        LOGGER.debug("Found defect: "+defectType);
         Defect defect = modelFactory.newDefect();
         defect.setDefectType(defectType);
         defect.setEntityName(entity.longname(true));
         Reference reference = entity.refs(null, null, true)[0];
-        defect.setProjectFile(reference.file().longname(true));
+        String defectFilePath;
+        try {
+            defectFilePath = new File(reference.file().longname(true)).getCanonicalPath();
+            defect.setProjectFile(defectFilePath.substring(project.getPath().length()+1));
+        } catch (IOException e) {
+            defect.setProjectFile(reference.file().longname(true));
+            LOGGER.error(e);
+        }
         defect.setDefectLine(reference.line());
         defect.setDefectColumn(reference.column());
         project.getLastUpdate().get().addDefect(defect);

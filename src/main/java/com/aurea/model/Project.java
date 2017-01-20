@@ -1,6 +1,7 @@
 package com.aurea.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -100,6 +101,13 @@ public class Project implements Serializable {
     @Override
     public String toString() {
         return "Project [projectId=" + projectId + ", path=" + path + ", url=" + url + ", getLastUpdate()=" + getLastUpdate() + "]";
+    }
+
+    public LocalDateTime getAddedAt() {
+        if (updates.isEmpty()) {
+            return LocalDateTime.now();
+        }
+        return updates.get(0).getActionTime();
     }
 
 }

@@ -41,7 +41,7 @@ public class RestProjectTest {
     }
 
     private RestProject newRestProject() {
-        return new RestProject(project);
+        return RestProject.fromProject(project);
     }
     
     @Test

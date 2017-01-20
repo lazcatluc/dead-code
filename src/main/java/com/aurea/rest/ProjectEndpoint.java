@@ -40,7 +40,7 @@ public class ProjectEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Gets the list of projects", response = RestProject.class)
     public List<RestProject> getAllProjects() {
-        return projectRepository.findAllInitialized().stream().map(RestProject::new).collect(Collectors.toList());
+        return projectRepository.findAllInitialized().stream().map(RestProject::fromProject).collect(Collectors.toList());
     }
 
     @POST
@@ -48,7 +48,7 @@ public class ProjectEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Adds a project based on a git repository url", response = RestProject.class)
     public RestProject addProject(ProjectUrl projectUrl) {
-        return new RestProject(projectAnalyzer.addProject(projectUrl.getUrl()));
+        return RestProject.fromProject(projectAnalyzer.addProject(projectUrl.getUrl()));
     }
 
     @GET
@@ -60,7 +60,7 @@ public class ProjectEndpoint {
         if (project == null) {
             throw new ProjectNotFoundException(projectId);
         }
-        return new RestProject(project);
+        return RestProject.fromProject(project);
     }
 
     @POST
@@ -76,7 +76,7 @@ public class ProjectEndpoint {
             throw new AnalysisAlreadyInProgressException(projectId);
         }
         Project updatedProject = projectAnalyzer.updateProject(project);
-        return new RestProject(updatedProject);
+        return RestProject.fromProject(updatedProject);
     }
 
     @DELETE

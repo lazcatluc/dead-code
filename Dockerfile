@@ -14,12 +14,15 @@ RUN apt-get install awscli -y
 
 #Install SciTools
 RUN apt-get install libxm4 -y
+RUN apt-get install libxtst6 -y
+RUN apt-get install libxi6 -y
 RUN wget http://builds.scitools.com/all_builds/b844/Understand/Understand-4.0.844-Linux-64bit.tgz
 RUN tar -xvf Understand-4.0.844-Linux-64bit.tgz
 RUN touch /scitools/conf/license/locallicense.dat
 RUN echo "Server: scitools-license.devfactory.com 00000000 9000" > /scitools/conf/license/locallicense.dat
 #Check license
-RUN /scitools/bin/linux64/und version
+ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/scitools/bin/linux64
+RUN und version
 
 # Configure  env
 RUN mkdir projects
@@ -28,4 +31,4 @@ RUN mkdir app
 COPY build/libs/dead-code.jar /app/dead-code.jar
 
 EXPOSE 80 8080
-ENTRYPOINT [ "sh", "-c", "java -jar /app/dead-code.jar -DundCommand=/scitools/bin/linux64/und -DworkFolder=/projects >/logs/dead-code.log" ] 
+ENTRYPOINT [ "sh", "-c", "java -Dspring.profiles.active=docker -jar /app/dead-code.jar >/logs/dead-code.log" ] 
